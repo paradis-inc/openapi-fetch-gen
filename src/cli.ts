@@ -33,12 +33,18 @@ try {
   const inputPath = path.resolve(options["input"]);
   const outputPath = path.resolve(options["output"]);
 
+  const relativeInputPath = path
+    .relative(path.dirname(outputPath), inputPath)
+    .replace(/\\/g, '/')
+    .replace(/\\.ts$/, '')
+    .replace(/^([^\\.])/, './$1');
+
   if (!fs.existsSync(inputPath)) {
     console.error(`Error: Input file not found: ${inputPath}`);
     process.exit(1);
   }
 
-  const clientCode = generateClient(inputPath);
+  const clientCode = generateClient(inputPath, relativeInputPath);
 
   fs.writeFileSync(outputPath, clientCode);
 
