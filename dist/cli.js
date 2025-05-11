@@ -22,11 +22,16 @@ try {
     const start = new Date().getTime() / 1000.0;
     const inputPath = node_path_1.default.resolve(options["input"]);
     const outputPath = node_path_1.default.resolve(options["output"]);
+    const relativeInputPath = node_path_1.default
+        .relative(node_path_1.default.dirname(outputPath), inputPath)
+        .replace(/\\/g, '/')
+        .replace(/\\.ts$/, '')
+        .replace(/^([^\\.])/, './$1');
     if (!node_fs_1.default.existsSync(inputPath)) {
         console.error(`Error: Input file not found: ${inputPath}`);
         process.exit(1);
     }
-    const clientCode = (0, index_1.generateClient)(inputPath);
+    const clientCode = (0, index_1.generateClient)(inputPath, relativeInputPath);
     node_fs_1.default.writeFileSync(outputPath, clientCode);
     const end = new Date().getTime() / 1000.0;
     console.log(`🏁 Successfully generated client at [${(end - start).toFixed(2)}ms]: ${outputPath}`);
