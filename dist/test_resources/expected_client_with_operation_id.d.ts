@@ -4,7 +4,7 @@ export declare class Client<HT extends Record<string, string>> {
     private readonly client;
     private readonly defaultHeaders;
     constructor(clientOptions: ClientOptions, defaultHeaders?: HT);
-    getUsers(params: {
+    listUsers(params: {
         query: {
             page?: number;
             pageSize?: number;
@@ -44,7 +44,7 @@ export declare class Client<HT extends Record<string, string>> {
             };
         };
     }, `${string}/${string}`>>;
-    postUsers(body: {
+    createUser(body: {
         name: string;
         email: string;
         membershipType: "REGULAR" | "PREMIUM" | "STUDENT";
@@ -93,7 +93,7 @@ export declare class Client<HT extends Record<string, string>> {
             };
         };
     }, `${string}/${string}`>>;
-    getUsersUserid(params: {
+    getUserDetails(params: {
         path: {
             userId: string;
         };
@@ -128,7 +128,7 @@ export declare class Client<HT extends Record<string, string>> {
             };
         };
     }, `${string}/${string}`>>;
-    putUsersUserid(params: {
+    replaceUser(params: {
         path: {
             userId: string;
         };
@@ -192,7 +192,7 @@ export declare class Client<HT extends Record<string, string>> {
             id: string;
         };
     }, `${string}/${string}`>>;
-    deleteUsersUserid(params: {
+    deleteUser(params: {
         path: {
             userId: string;
         };
@@ -225,7 +225,7 @@ export declare class Client<HT extends Record<string, string>> {
             };
         };
     }, `${string}/${string}`>>;
-    patchUsersUserid(params: {
+    updateUserFields(params: {
         path: {
             userId: string;
         };
@@ -285,7 +285,7 @@ export declare class Client<HT extends Record<string, string>> {
             };
         };
     }, `${string}/${string}`>>;
-    getUsersUseridLoans(params: {
+    listUserLoans(params: {
         path: {
             userId: string;
         };
@@ -320,7 +320,7 @@ export declare class Client<HT extends Record<string, string>> {
             };
         };
     }, `${string}/${string}`>>;
-    postUsersSearch(body: {
+    searchUsers(body: {
         name?: string;
         email?: string;
         joinedAfter?: string;
@@ -363,7 +363,7 @@ export declare class Client<HT extends Record<string, string>> {
             membershipType?: "REGULAR" | "PREMIUM" | "STUDENT";
         };
     }, `${string}/${string}`>>;
-    postUsersBulk(body: {
+    bulk_User_Imp_ort(body: {
         file?: string;
     }): Promise<createClient.FetchResponse<{
         parameters: {
@@ -511,4 +511,4 @@ export type Book = components["schemas"]["Book"];
 export type BulkJobStatus = components["schemas"]["BulkJobStatus"];
 export type ClientSchema = components["schemas"]["Client"];
 export type schema_Something = components["schemas"]["schema-Something"];
-//# sourceMappingURL=expected_client.d.ts.map
+//# sourceMappingURL=expected_client_with_operation_id.d.ts.map

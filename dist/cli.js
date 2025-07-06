@@ -16,10 +16,11 @@ program
     .version(package_json_1.version)
     .requiredOption("-i, --input <path>", "path to input OpenAPI TypeScript definition file")
     .option("-o, --output <path>", "path to output generated client file", "./client.ts")
+    .option("--use-operation-id", "use operationId from OpenAPI schema for method names instead of generating from path", false)
     .parse(process.argv);
 const options = program.opts();
 try {
-    const start = new Date().getTime() / 1000.0;
+    const start = Date.now() / 1000.0;
     const inputPath = node_path_1.default.resolve(options["input"]);
     const outputPath = node_path_1.default.resolve(options["output"]);
     const relativeInputPath = node_path_1.default
@@ -33,7 +34,7 @@ try {
     }
     const clientCode = (0, index_1.generateClient)(inputPath, relativeInputPath);
     node_fs_1.default.writeFileSync(outputPath, clientCode);
-    const end = new Date().getTime() / 1000.0;
+    const end = Date.now() / 1000.0;
     console.log(`🏁 Successfully generated client at [${(end - start).toFixed(2)}ms]: ${outputPath}`);
 }
 catch (error) {

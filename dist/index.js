@@ -54,7 +54,9 @@ function generateSchemaTypes(componentsInterface) {
             const schemaType = schema.getValueDeclaration()?.getType();
             if (schemaType) {
                 const schemaName = schema.getName();
-                const schemaTypeName = (schemaName + (schemaName === "Client" ? "Schema" : "")).replaceAll(/-/g, "_");
+                const schemaTypeName = (schemaName + (schemaName === "Client" ? "Schema" : ""))
+                    .replaceAll(/-/g, "_")
+                    .replaceAll(/\./g, "_");
                 types.push(`export type ${schemaTypeName} = components["schemas"]["${schema.getName()}"];`);
             }
         }
@@ -94,6 +96,18 @@ function extractEndpointsInfo(pathsInterface) {
             if (!ts_morph_1.Node.isPropertySignature(decl)) {
                 continue;
             }
+            const typeNode = decl.getTypeNodeOrThrow();
+            const operationId = (() => {
+                if (ts_morph_1.Node.isIndexedAccessTypeNode(typeNode) &&
+                    typeNode.getObjectTypeNode().getText() === "operations") {
+                    const indexTypeNode = typeNode.getIndexTypeNode();
+                    if (ts_morph_1.Node.isLiteralTypeNode(indexTypeNode) &&
+                        indexTypeNode.getLiteral().getKind() === ts_morph_1.SyntaxKind.StringLiteral) {
+                        return sanitizeForOperation(indexTypeNode.getLiteral().getText().slice(1, -1));
+                    }
+                }
+                return null;
+            })();
             const paramProp = decl.getType().getPropertyOrThrow("parameters");
             const paramTypes = paramProp
                 .getTypeAtLocation(decl)
@@ -182,10 +196,7 @@ function extractEndpointsInfo(pathsInterface) {
                     }
                 }
             }
-            const sanitizedPath = path
-                .replace(/[{}]/g, "")
-                .replace(/[-/.]/g, "_")
-                .replace(/^_/, "");
+            const sanitizedPath = sanitizeForOperation(path);
             const pathSegments = sanitizedPath.split("_");
             const camelCasePath = pathSegments
                 .map((segment, index) => {
@@ -194,11 +205,12 @@ function extractEndpointsInfo(pathsInterface) {
                 return (segment.charAt(0).toUpperCase() + segment.slice(1).toLowerCase());
             })
                 .join("");
-            const operationName = `${httpMethod}${camelCasePath.charAt(0).toUpperCase()}${camelCasePath.slice(1)}`;
+            const defaultOperationName = `${httpMethod}${camelCasePath.charAt(0).toUpperCase()}${camelCasePath.slice(1)}`;
             endpoints.push({
                 path,
                 httpMethod,
-                operationName,
+                operationName: defaultOperationName,
+                operationId,
                 commentLines,
                 paramsType,
                 bodyType: requestBodyType,
@@ -208,7 +220,7 @@ function extractEndpointsInfo(pathsInterface) {
     }
     return endpoints;
 }
-function generateClientClass(endpoints) {
+function generateClientClass(endpoints, options = {}) {
     const classCode = [
         `export class Client<HT extends Record<string, string>> {
        private readonly client;
@@ -221,7 +233,8 @@ function generateClientClass(endpoints) {
     `,
     ];
     for (const endpoint of endpoints) {
-        const { path, httpMethod, operationName, commentLines, paramsType, bodyType, } = endpoint;
+        const { path, httpMethod, operationName, operationId, commentLines, paramsType, bodyType, } = endpoint;
+        const methodName = options.useOperationId && operationId ? operationId : operationName;
         if (commentLines.length > 0) {
             classCode.push("    /**");
             for (const line of commentLines) {
@@ -229,7 +242,7 @@ function generateClientClass(endpoints) {
             }
             classCode.push("     */");
         }
-        classCode.push(`    async ${operationName}(`);
+        classCode.push(`    async ${methodName}(`);
         const paramsList = [];
         if (paramsType) {
             paramsList.push(`params: ${paramsType}`);
@@ -263,5 +276,11 @@ function generateClientClass(endpoints) {
     classCode.push("}");
     classCode.push("");
     return classCode.join("\n");
+}
+function sanitizeForOperation(operation) {
+    return operation
+        .replace(/[{}]/g, "")
+        .replace(/[-/.]/g, "_")
+        .replace(/^_/, "");
 }
 //# sourceMappingURL=index.js.map

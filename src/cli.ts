@@ -37,7 +37,7 @@ try {
 
   const inputPath = path.resolve(options["input"]);
   const outputPath = path.resolve(options["output"]);
-  const useOperationId = options["useOperationId"] || false;
+  // const useOperationId = options["useOperationId"] || false;
 
   const relativeInputPath = path
     .relative(path.dirname(outputPath), inputPath)
