@@ -102,7 +102,9 @@ function generateSchemaTypes(
         const schemaName = schema.getName();
         const schemaTypeName = (
           schemaName + (schemaName === "Client" ? "Schema" : "")
-        ).replaceAll(/-/g, "_");
+        )
+          .replaceAll(/-/g, "_")
+          .replaceAll(/\./g, "_");
         types.push(
           `export type ${schemaTypeName} = components["schemas"]["${schema.getName()}"];`,
         );
