@@ -23,15 +23,21 @@ program
     "path to output generated client file",
     "./client.ts",
   )
+  .option(
+    "--use-operation-id",
+    "use operationId from OpenAPI schema for method names instead of generating from path",
+    false,
+  )
   .parse(process.argv);
 
 const options = program.opts();
 
 try {
-  const start = new Date().getTime() / 1000.0;
+  const start = Date.now() / 1000.0;
 
   const inputPath = path.resolve(options["input"]);
   const outputPath = path.resolve(options["output"]);
+  const useOperationId = options["useOperationId"] || false;
 
   const relativeInputPath = path
     .relative(path.dirname(outputPath), inputPath)
@@ -43,12 +49,11 @@ try {
     console.error(`Error: Input file not found: ${inputPath}`);
     process.exit(1);
   }
-
   const clientCode = generateClient(inputPath, relativeInputPath);
 
   fs.writeFileSync(outputPath, clientCode);
 
-  const end = new Date().getTime() / 1000.0;
+  const end = Date.now() / 1000.0;
 
   console.log(
     `🏁 Successfully generated client at [${(end - start).toFixed(2)}ms]: ${outputPath}`,

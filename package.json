@@ -1,6 +1,6 @@
 {
   "name": "openapi-fetch-gen",
-  "version": "0.3.2",
+  "version": "0.5",
   "description": "Generate TypeScript API client from OpenAPI TypeScript interface definitions created by openapi-typescript",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -48,14 +48,14 @@
   "license": "MIT",
   "dependencies": {
     "tmp": "^0.2.3",
-    "commander": "^13.1.0",
-    "ts-morph": "^25.0.1"
+    "commander": "^14.0.0",
+    "ts-morph": "^26.0.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
+    "@biomejs/biome": "^2.0.0",
     "@types/node": "^22.14.1",
     "@types/tmp": "^0.2.6",
-    "openapi-fetch": "^0.13.5",
+    "openapi-fetch": "^0.14.0",
     "openapi-typescript": "^7.6.1",
     "typescript": "^5.8.3",
     "vitest": "^3.1.1"
